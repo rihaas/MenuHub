@@ -436,7 +436,7 @@
   </div>
 
   <!-- Main Content Area -->
-  <main class="flex-1 max-w-5xl w-full mx-auto px-4 pt-6 pb-28">
+  <main class="flex-1 max-w-5xl w-full mx-auto px-4 pt-6 pb-32 sm:pb-28">
     
     <!-- Quick Combo Banner / Special Highlight -->
     <div class="mb-8 bg-gradient-to-r from-[#fff5eb] via-[#fdf0e2] to-[#fbeae5] border border-[#f2d6c3] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
@@ -524,7 +524,7 @@
         <button onclick="clearCart()" id="clearCartBtn" class="text-xs text-[#c9b8a5] hover:text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-white/5 transition flex items-center gap-1" title="Clear all items">
           <i class="fa-regular fa-trash-can"></i> Clear
         </button>
-        <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition">
+        <button onclick="closeCartDrawer()" aria-label="Close order tray" class="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -672,7 +672,7 @@
             <p class="text-xs text-cafe-muted">Where should customer orders be sent?</p>
           </div>
         </div>
-        <button onclick="closeOwnerConfigModal()" class="w-8 h-8 rounded-full bg-cafe-bg hover:bg-cafe-line flex items-center justify-center text-cafe-text">
+        <button onclick="closeOwnerConfigModal()" aria-label="Close owner WhatsApp settings" class="w-11 h-11 rounded-full bg-cafe-bg hover:bg-cafe-line flex items-center justify-center text-cafe-text">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -1179,7 +1179,7 @@
             <span class="w-7 text-center font-extrabold text-xs sm:text-sm" aria-live="polite">${qty}</span>
             <button 
               onclick="updateItemQty('${item.id}', 1)" 
-              class="w-7 h-7 rounded-lg hover:bg-black/15 flex items-center justify-center transition active:scale-90"
+              class="w-9 h-9 min-w-[36px] rounded-lg hover:bg-black/15 flex items-center justify-center transition active:scale-90"
               aria-label="Increase quantity"
             >
               <i class="fa-solid fa-plus text-xs"></i>
@@ -1349,7 +1349,10 @@
     /**************************************************************
      * 5. DRAWER & FILTER INTERACTIONS
      **************************************************************/
+    let lastFocusedElement = null;
+
     function openCartDrawer() {
+      lastFocusedElement = document.activeElement;
       updateCartUI();
       const backdrop = document.getElementById('cartDrawerBackdrop');
       const drawer = document.getElementById('cartDrawer');
@@ -1359,6 +1362,8 @@
         drawer.classList.remove('translate-x-full');
       }, 10);
       document.body.style.overflow = 'hidden';
+      const closeButton = document.querySelector('#cartDrawer button[aria-label="Close order tray"]');
+      window.setTimeout(() => closeButton?.focus(), 50);
     }
 
     function closeCartDrawer() {
@@ -1370,6 +1375,9 @@
         backdrop.classList.add('hidden');
       }, 300);
       document.body.style.overflow = '';
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      }
     }
 
     function setOrderType(type) {
@@ -1433,7 +1441,9 @@
 
     function updateCategoryTabStyles() {
       document.querySelectorAll('.cat-btn').forEach(btn => {
-        if (btn.dataset.cat === activeCategory) {
+        const isActive = btn.dataset.cat === activeCategory;
+        btn.setAttribute('aria-pressed', String(isActive));
+        if (isActive) {
           btn.className = 'cat-btn active shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border transition flex items-center gap-2 bg-cafe-accent text-white border-cafe-accent shadow-sm';
         } else {
           btn.className = 'cat-btn shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border border-cafe-line bg-white text-cafe-text hover:border-cafe-accent hover:text-cafe-accent transition flex items-center gap-2';
@@ -1542,6 +1552,14 @@
       document.body.appendChild(textArea);
       textArea.select();
 
+      if (navigator.clipboard && window.isSecureContext) {
+        document.body.removeChild(textArea);
+        navigator.clipboard.writeText(message).then(() => {
+          showToast('Order summary copied! Paste it in WhatsApp or Instagram.');
+        }).catch(() => showToast('Could not copy automatically. Please try WhatsApp or SMS instead.', true));
+        return;
+      }
+
       let copied = false;
       try {
         copied = document.execCommand('copy');
@@ -1549,15 +1567,10 @@
         copied = false;
       }
       document.body.removeChild(textArea);
-      if (copied) {
-        showToast('Order summary copied! Paste it in WhatsApp or Instagram.');
-      } else if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(message).then(() => {
-          showToast('Order summary copied! Paste it in WhatsApp or Instagram.');
-        }).catch(() => showToast('Could not copy automatically. Please select and copy the order text.', true));
-      } else {
-        showToast('Could not copy automatically. Please try WhatsApp or SMS instead.', true);
-      }
+      showToast(
+        copied ? 'Order summary copied! Paste it in WhatsApp or Instagram.' : 'Could not copy automatically. Please try WhatsApp or SMS instead.',
+        !copied
+      );
     }
 
     /**************************************************************
@@ -1579,6 +1592,7 @@
     }
 
     function openOwnerConfigModal() {
+      lastFocusedElement = document.activeElement;
       const modal = document.getElementById('ownerModalBackdrop');
       const input = document.getElementById('ownerPhoneInput');
       input.value = ownerPhone;
@@ -1591,6 +1605,9 @@
       const modal = document.getElementById('ownerModalBackdrop');
       modal.classList.add('hidden');
       modal.classList.remove('flex');
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      }
     }
 
     function saveOwnerPhone() {
@@ -1643,6 +1660,17 @@
     /**************************************************************
      * 9. INITIALIZATION & EVENT LISTENERS
      **************************************************************/
+    window.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const ownerModal = document.getElementById('ownerModalBackdrop');
+      const drawerBackdrop = document.getElementById('cartDrawerBackdrop');
+      if (!ownerModal.classList.contains('hidden')) {
+        closeOwnerConfigModal();
+      } else if (!drawerBackdrop.classList.contains('hidden')) {
+        closeCartDrawer();
+      }
+    });
+
     window.addEventListener('DOMContentLoaded', () => {
       // Category tab clicks
       document.querySelectorAll('.cat-btn').forEach(btn => {
