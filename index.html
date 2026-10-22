@@ -1195,6 +1195,17 @@
       const btn = document.getElementById('dataSaverToggle'); btn.textContent = currentLanguage === 'ml' ? (dataSaverEnabled ? 'ഡാറ്റ സേവർ: ഓൺ' : 'ഡാറ്റ സേവർ: ഓഫ്') : (dataSaverEnabled ? 'Data Saver: On' : 'Data Saver: Off'); btn.setAttribute('aria-pressed', String(dataSaverEnabled));
       renderMenu(); showToast(dataSaverEnabled ? 'Data Saver enabled: menu photos are hidden.' : 'Data Saver disabled.');
     }
+    // Live inventory updates from Firebase are applied to this in-memory menu.
+    window.addEventListener('menuhub:inventory', (event) => {
+      const updates = event.detail || [];
+      updates.forEach(update => {
+        const item = MENU_ITEMS.find(entry => entry.id === update.id);
+        if (item) Object.assign(item, update);
+      });
+      renderMenu();
+      updateCartUI();
+    });
+
     function renderMenu() {
       const container = document.getElementById('menuContainer');
       const emptyState = document.getElementById('emptyState');
@@ -1268,7 +1279,9 @@
         ? `<span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 border border-amber-200/70">${item.badge}</span>`
         : '';
 
-      const actionButtonHtml = qty === 0
+      const actionButtonHtml = item.available === false && qty === 0
+        ? `<button type="button" disabled class="min-h-[44px] px-4 py-2 rounded-xl border border-red-200 bg-red-50 text-red-700 font-bold text-xs sm:text-sm cursor-not-allowed">${currentLanguage === 'ml' ? 'സ്റ്റോക്ക് തീർന്നു' : 'Sold Out'}</button>`
+        : qty === 0
         ? `<button 
             onclick="updateItemQty('${item.id}', 1)" 
             class="add-item-btn min-h-[44px] min-w-[76px] px-4 py-2 rounded-xl border border-cafe-accent bg-cafe-accentLight/50 hover:bg-cafe-accent text-cafe-accent hover:text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-2xs active:scale-95" aria-label="Add ${item.name} to order"
@@ -1332,6 +1345,11 @@
      * 4. CART MANAGEMENT & UPDATES
      **************************************************************/
     function updateItemQty(itemId, delta) {
+      const item = MENU_ITEMS.find(i => i.id === itemId);
+      if (delta > 0 && item && item.available === false) {
+        showToast(currentLanguage === 'ml' ? 'ഈ വിഭവം ഇപ്പോൾ ലഭ്യമല്ല.' : 'This item is currently unavailable.');
+        return;
+      }
       const current = cart[itemId] || 0;
       const next = current + delta;
 
@@ -1833,6 +1851,31 @@
       renderMenu();
       updateCartUI();
     });
+  </script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    // Use the same Firebase web app config as admin.html. Never put a service-account key here.
+    const FIREBASE_CONFIG = {
+      apiKey: "YOUR_FIREBASE_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_FIREBASE_APP_ID"
+    };
+    const configured = !FIREBASE_CONFIG.apiKey.startsWith("YOUR_") && !FIREBASE_CONFIG.projectId.startsWith("YOUR_");
+    if (configured) {
+      try {
+        const app = initializeApp(FIREBASE_CONFIG);
+        const db = getFirestore(app);
+        onSnapshot(collection(db, "menuItems"), snapshot => {
+          const updates = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          window.dispatchEvent(new CustomEvent("menuhub:inventory", { detail: updates }));
+        }, error => console.warn("MenuHub live stock sync unavailable; showing default menu.", error));
+      } catch (error) {
+        console.warn("MenuHub Firebase is not configured yet; showing default menu.", error);
+      }
+    }
   </script>
 </body>
 </html>
