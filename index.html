@@ -116,18 +116,215 @@
     .cart-bounce {
       animation: pulseSubtle 0.3s ease-in-out;
     }
+
+    /* Mobile-first refinements: comfortable controls, safe areas, and no sideways overflow. */
+    :root {
+      color-scheme: light;
+      scroll-padding-top: 7rem;
+    }
+    html, body {
+      width: 100%;
+      overflow-x: clip;
+    }
+    button, input, textarea {
+      touch-action: manipulation;
+    }
+    button:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(178, 58, 30, 0.42);
+      outline-offset: 2px;
+    }
+    input, textarea {
+      font-size: 16px; /* Prevent mobile Safari from zooming into form fields. */
+    }
+    #categoryTabs {
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
+      overscroll-behavior-x: contain;
+      position: relative;
+    }
+    #categoryTabs > button {
+      min-height: 42px;
+      scroll-snap-align: start;
+    }
+    .cat-btn, .diet-filter-btn, .order-type-btn {
+      -webkit-tap-highlight-color: transparent;
+    }
+    #floatingCartBar {
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+      padding-left: max(0.75rem, env(safe-area-inset-left));
+      padding-right: max(0.75rem, env(safe-area-inset-right));
+    }
+    #cartDrawer {
+      height: 100vh;
+      height: 100dvh;
+      padding-top: env(safe-area-inset-top);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+      overscroll-behavior: contain;
+    }
+    #drawerFooter {
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+    #toastBox {
+      top: max(1rem, env(safe-area-inset-top));
+      left: max(1rem, env(safe-area-inset-left));
+      right: max(1rem, env(safe-area-inset-right));
+    }
+    #ownerModalBackdrop {
+      padding-top: max(1rem, env(safe-area-inset-top));
+      padding-bottom: max(1rem, env(safe-area-inset-bottom));
+      overflow-y: auto;
+    }
+    @media (max-width: 639px) {
+      #announcementBar .announcement-copy {
+        max-width: 100%;
+        line-height: 1.45;
+      }
+      #announcementBar {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+      }
+      #announcementBar .owner-config-trigger {
+        min-height: 40px;
+        max-width: 100%;
+        text-align: left;
+      }
+      #heroContent {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+      }
+      #heroTitle {
+        font-size: clamp(1.9rem, 8vw, 2.5rem);
+        line-height: 1.08;
+        text-wrap: balance;
+      }
+      #searchInput {
+        min-height: 50px;
+        border-radius: 1rem;
+      }
+      #categoryBarInner {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        gap: 0.625rem;
+      }
+      #categoryTabs {
+        margin-right: -1rem;
+        padding-right: 1rem;
+        padding-bottom: 0.125rem;
+      }
+      #categoryTabs::after {
+        content: "";
+        position: sticky;
+        right: 0;
+        min-width: 1rem;
+        height: 2.5rem;
+        margin-left: -1rem;
+        pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,.95));
+      }
+      .diet-filter-btn {
+        min-height: 38px;
+        min-width: 52px;
+        padding: 0.5rem 0.875rem;
+      }
+      #menuContainer {
+        gap: 1.5rem;
+      }
+      #menuContainer section > div:first-child {
+        align-items: flex-start;
+        gap: 0.625rem;
+      }
+      #menuContainer section > div:first-child p {
+        max-width: 17rem;
+        line-height: 1.45;
+      }
+      #menuContainer section > div:first-child > span {
+        flex-shrink: 0;
+        margin-top: 0.25rem;
+      }
+      .menu-item-card {
+        padding: 1rem;
+        border-radius: 1.125rem;
+      }
+      .menu-item-card h3 {
+        font-size: 1rem;
+        line-height: 1.35;
+        text-wrap: pretty;
+      }
+      .menu-item-card p {
+        font-size: 0.8125rem;
+        line-height: 1.55;
+      }
+      .menu-item-card .menu-item-actions {
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .menu-item-card .quantity-stepper,
+      .menu-item-card .add-item-btn {
+        min-height: 44px;
+      }
+      .menu-item-card .quantity-stepper button {
+        min-width: 38px;
+        min-height: 38px;
+      }
+      #floatingCartBar > div {
+        padding: 0.75rem;
+        gap: 0.625rem;
+        border-radius: 1rem;
+      }
+      #cartIconBadge {
+        width: 2.625rem;
+        height: 2.625rem;
+      }
+      #floatingItemPreview {
+        max-width: min(42vw, 11rem);
+      }
+      #floatingCartBar .floating-cart-cta {
+        min-height: 44px;
+        padding-left: 0.875rem;
+        padding-right: 0.875rem;
+        white-space: nowrap;
+      }
+      #cartDrawer > div:first-child {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      #drawerFooter button {
+        min-height: 44px;
+      }
+      #cartDrawer .order-type-btn {
+        min-height: 64px;
+      }
+      #cartItemsList {
+        max-height: 34vh;
+        max-height: 34dvh;
+      }
+      main {
+        padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-cafe-accent selection:text-white">
 
   <!-- Top Announcement / Owner Config Bar -->
-  <div class="bg-[#1e130b] text-[#c9b8a5] text-xs py-2 px-4 border-b border-white/10">
+  <div id="announcementBar" class="bg-[#1e130b] text-[#c9b8a5] text-xs py-2 px-4 border-b border-white/10">
     <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-2">
       <div class="flex items-center gap-2">
         <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Accepting Instant WhatsApp Orders • Dine-In, Takeaway & Local Delivery</span>
+        <span class="announcement-copy">Accepting Instant WhatsApp Orders • Dine-In, Takeaway & Local Delivery</span>
       </div>
-      <button onclick="openOwnerConfigModal()" class="text-cafe-gold hover:underline flex items-center gap-1.5 font-medium transition">
+      <button onclick="openOwnerConfigModal()" class="owner-config-trigger text-cafe-gold hover:underline flex items-center gap-1.5 font-medium transition">
         <i class="fa-solid fa-gear text-[11px]"></i>
         <span>Owner WhatsApp: <strong id="topOwnerPhoneDisplay">+91 98765 43210</strong></span>
       </button>
@@ -139,7 +336,7 @@
     <!-- Decorative subtle coffee pattern background -->
     <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#e8c9a0 1px, transparent 1px); background-size: 24px 24px;"></div>
     
-    <div class="relative max-w-5xl mx-auto px-4 pt-8 pb-7 sm:py-10 text-center">
+    <div id="heroContent" class="relative max-w-5xl mx-auto px-4 pt-8 pb-7 sm:py-10 text-center">
       <!-- Cafe Badge -->
       <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-cafe-gold text-xs font-medium mb-3">
         <i class="fa-solid fa-mug-hot"></i>
@@ -147,7 +344,7 @@
       </div>
 
       <!-- Main Title -->
-      <h1 class="font-serif text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-2">
+      <h1 id="heroTitle" class="font-serif text-3xl sm:text-5xl font-extrabold tracking-tight text-white mb-2">
         BackBenchers Cafe
       </h1>
       <p class="text-cafe-gold text-base sm:text-lg font-medium italic mb-4">
@@ -195,7 +392,7 @@
 
   <!-- Sticky Navigation & Dietary Filter Bar -->
   <div class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-cafe-line shadow-sm">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+    <div id="categoryBarInner" class="max-w-5xl mx-auto px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       
       <!-- Category Tabs (Horizontal Scroll on Mobile) -->
       <nav id="categoryTabs" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5 md:pb-0">
@@ -299,7 +496,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="openCartDrawer()" class="px-4 sm:px-6 py-3 rounded-xl bg-cafe-accent hover:bg-cafe-accentDark text-white font-bold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg">
+        <button onclick="openCartDrawer()" class="floating-cart-cta px-4 sm:px-6 py-3 rounded-xl bg-cafe-accent hover:bg-cafe-accentDark text-white font-bold text-xs sm:text-sm transition flex items-center gap-2 shadow-lg">
           <span>View Cart & Order</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -310,7 +507,7 @@
   <!-- Slide-Over Cart & Order Drawer Modal -->
   <div id="cartDrawerBackdrop" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden opacity-0 transition-opacity duration-300" onclick="closeCartDrawer()"></div>
   
-  <aside id="cartDrawer" class="fixed top-0 right-0 bottom-0 z-50 w-full max-w-lg bg-cafe-bg shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+  <aside id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartDrawerTitle" class="fixed top-0 right-0 bottom-0 z-50 w-full max-w-lg bg-cafe-bg shadow-2xl translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
     
     <!-- Drawer Header -->
     <div class="bg-cafe-text text-white px-5 py-4 flex items-center justify-between border-b border-white/10">
@@ -319,7 +516,7 @@
           <i class="fa-solid fa-receipt"></i>
         </div>
         <div>
-          <h2 class="font-bold text-base sm:text-lg leading-tight">Your Order Tray</h2>
+          <h2 id="cartDrawerTitle" class="font-bold text-base sm:text-lg leading-tight">Your Order Tray</h2>
           <p class="text-xs text-cafe-gold">BackBenchers Cafe • Kollengode</p>
         </div>
       </div>
@@ -463,7 +660,7 @@
   </aside>
 
   <!-- Owner Phone Configuration Modal -->
-  <div id="ownerModalBackdrop" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+  <div id="ownerModalBackdrop" role="dialog" aria-modal="true" aria-labelledby="ownerModalTitle" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
     <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-cafe-line animate-pop">
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2.5">
@@ -471,7 +668,7 @@
             <i class="fa-brands fa-whatsapp"></i>
           </div>
           <div>
-            <h3 class="font-bold text-base text-cafe-text">Cafe Owner WhatsApp Setup</h3>
+            <h3 id="ownerModalTitle" class="font-bold text-base text-cafe-text">Cafe Owner WhatsApp Setup</h3>
             <p class="text-xs text-cafe-muted">Where should customer orders be sent?</p>
           </div>
         </div>
@@ -966,20 +1163,20 @@
       const actionButtonHtml = qty === 0
         ? `<button 
             onclick="updateItemQty('${item.id}', 1)" 
-            class="px-4 py-2 rounded-xl border border-cafe-accent bg-cafe-accentLight/50 hover:bg-cafe-accent text-cafe-accent hover:text-white font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-2xs active:scale-95"
+            class="add-item-btn min-h-[44px] min-w-[76px] px-4 py-2 rounded-xl border border-cafe-accent bg-cafe-accentLight/50 hover:bg-cafe-accent text-cafe-accent hover:text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-2xs active:scale-95" aria-label="Add ${item.name} to order"
           >
             <span>Add</span>
             <i class="fa-solid fa-plus text-[11px]"></i>
           </button>`
-        : `<div class="inline-flex items-center bg-cafe-accent text-white rounded-xl p-1 shadow-sm">
+        : `<div class="quantity-stepper inline-flex items-center bg-cafe-accent text-white rounded-xl p-1 shadow-sm" aria-label="Quantity for ${item.name}">
             <button 
               onclick="updateItemQty('${item.id}', -1)" 
-              class="w-7 h-7 rounded-lg hover:bg-black/15 flex items-center justify-center transition active:scale-90"
+              class="w-9 h-9 min-w-[36px] rounded-lg hover:bg-black/15 flex items-center justify-center transition active:scale-90"
               aria-label="Decrease quantity"
             >
               <i class="fa-solid fa-minus text-xs"></i>
             </button>
-            <span class="w-7 text-center font-extrabold text-xs sm:text-sm">${qty}</span>
+            <span class="w-7 text-center font-extrabold text-xs sm:text-sm" aria-live="polite">${qty}</span>
             <button 
               onclick="updateItemQty('${item.id}', 1)" 
               class="w-7 h-7 rounded-lg hover:bg-black/15 flex items-center justify-center transition active:scale-90"
@@ -990,7 +1187,7 @@
           </div>`;
 
       return `
-        <div class="bg-white rounded-2xl p-4 border ${qty > 0 ? 'border-cafe-accent ring-1 ring-cafe-accent/20' : 'border-cafe-line'} shadow-warm hover:shadow-md transition flex flex-col justify-between gap-3">
+        <div class="menu-item-card bg-white rounded-2xl p-4 border ${qty > 0 ? 'border-cafe-accent ring-1 ring-cafe-accent/20' : 'border-cafe-line'} shadow-warm hover:shadow-md transition flex flex-col justify-between gap-3">
           <div>
             <div class="flex items-center justify-between gap-2 mb-1.5">
               <div class="flex items-center gap-2">
@@ -1003,7 +1200,7 @@
             <p class="text-xs text-cafe-muted leading-relaxed">${item.desc}</p>
           </div>
 
-          <div class="pt-2.5 border-t border-dashed border-cafe-line flex items-center justify-between">
+          <div class="menu-item-actions pt-2.5 border-t border-dashed border-cafe-line flex items-center justify-between">
             <span class="text-[11px] font-medium ${qty > 0 ? 'text-cafe-accent font-semibold' : 'text-cafe-muted'}">
               ${qty > 0 ? `<i class="fa-solid fa-check mr-1"></i>${qty} in your tray (₹${qty * item.price})` : 'Freshly made to order'}
             </span>
@@ -1345,13 +1542,22 @@
       document.body.appendChild(textArea);
       textArea.select();
 
+      let copied = false;
       try {
-        document.execCommand('copy');
-        showToast('Order summary copied! Paste it in WhatsApp or Instagram.');
+        copied = document.execCommand('copy');
       } catch (err) {
-        showToast('Could not copy automatically.', true);
+        copied = false;
       }
       document.body.removeChild(textArea);
+      if (copied) {
+        showToast('Order summary copied! Paste it in WhatsApp or Instagram.');
+      } else if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(message).then(() => {
+          showToast('Order summary copied! Paste it in WhatsApp or Instagram.');
+        }).catch(() => showToast('Could not copy automatically. Please select and copy the order text.', true));
+      } else {
+        showToast('Could not copy automatically. Please try WhatsApp or SMS instead.', true);
+      }
     }
 
     /**************************************************************
@@ -1443,6 +1649,9 @@
         btn.addEventListener('click', () => {
           activeCategory = btn.dataset.cat;
           updateCategoryTabStyles();
+          if (window.matchMedia('(max-width: 767px)').matches) {
+            btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
           renderMenu();
         });
       });
