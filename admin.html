@@ -21,7 +21,7 @@ let auth,db,unsubscribe;
 if(!ready){document.getElementById("login").classList.add("hidden");say("Firebase is not configured. Complete the setup checklist before signing in.");}
 else{
 const app=initializeApp(FIREBASE_CONFIG);auth=getAuth(app);db=getFirestore(app);
-document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();try{await signInWithEmailAndPassword(auth,email.value.trim(),password.value);say("Signed in.");}catch{say("Sign-in failed. Check credentials and Firebase Authentication settings.");}});
+document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();try{await signInWithEmailAndPassword(auth,document.getElementById("email").value.trim(),document.getElementById("password").value);say("Signed in.");}catch{say("Sign-in failed. Check credentials and Firebase Authentication settings.");}});
 document.getElementById("reset").addEventListener("click",async()=>{if(!document.getElementById("email").value.trim()){say("Enter your email first.");return;}try{await sendPasswordResetEmail(auth,document.getElementById("email").value.trim());say("If the account exists, a reset email has been sent.");}catch{say("Unable to send reset email. Check Firebase settings.");}});
 document.getElementById("logout").addEventListener("click",()=>signOut(auth));
 document.getElementById("initialize").addEventListener("click",async()=>{try{for(const item of DEFAULT_ITEMS)await setDoc(doc(db,"menuItems",item.id),item,{merge:true});say("Menu initialized. Existing saved values were preserved.");}catch{say("Initialize failed. Confirm this signed-in email is allowed by Firestore rules.");}});
