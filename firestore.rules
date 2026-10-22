@@ -4,7 +4,7 @@ service cloud.firestore {
     function isMenuAdmin() {
       return request.auth != null
         && request.auth.token.email != null
-        && request.auth.token.email == 'admin@example.com';
+        && request.auth.token.email == 'admin.test@gmail.com';
     }
 
     match /menuItems/{itemId} {
