@@ -1178,6 +1178,8 @@
       'BackBencher Special Zinger Burger':'ബാക്ക്‌ബെഞ്ചർ സ്പെഷ്യൽ സിംഗർ ബർഗർ','Grill Chicken Tortilla Wrap':'ഗ്രിൽഡ് ചിക്കൻ റാപ്പ്','Creamy Alfredo Penne Pasta':'ക്രീമി ആൽഫ്രെഡോ പെണ്ണെ പാസ്ത','Schezwan Chicken Fried Rice':'ഷെസ്വാൻ ചിക്കൻ ഫ്രൈഡ് റൈസ്','Classic Crispy Veg Burger':'ക്രിസ്പി വെജ് ബർഗർ','Sizzling Brownie with Ice Cream':'ഐസ്‌ക്രീമിനൊപ്പം സിസ്ലിംഗ് ബ്രൗണി','Warm Choco Lava Cake':'ചൂടുള്ള ചോക്കോ ലാവ കേക്ക്','BackBenchers Royal Falooda':'ബാക്ക്‌ബെഞ്ചേഴ്സ് റോയൽ ഫലൂദ','Belgian Dark Chocolate Waffle':'ബെൽജിയൻ ഡാർക്ക് ചോക്ലേറ്റ് വാഫിൾ'
     };
     function translatedName(name) { return currentLanguage === 'ml' ? (MALAYALAM_NAMES[name] || name) : name; }
+    function translatedCategoryTitle(cat) { return currentLanguage === 'ml' ? ({coffee:'കോഫി & ചായ',shakes:'ഷേക്ക്സ് & ജ്യൂസ്',snacks:'സ്നാക്സ് & സ്റ്റാർട്ടേഴ്സ്',mains:'പ്രധാന വിഭവങ്ങൾ',desserts:'മധുരപലഹാരങ്ങൾ'}[cat.id] || cat.title) : cat.title; }
+    function translatedCategorySubtitle(cat) { return currentLanguage === 'ml' ? ({coffee:'കോഫിയും ചായയും',shakes:'തണുത്ത പാനീയങ്ങളും ജ്യൂസുകളും',snacks:'ലഘുഭക്ഷണങ്ങളും സ്റ്റാർട്ടേഴ്സും',mains:'ബർഗറുകൾ, റാപ്പുകൾ, പാസ്ത, റൈസ്',desserts:'മധുരമുള്ള വിഭവങ്ങൾ'}[cat.id] || cat.subtitle) : cat.subtitle; }
     function toggleLanguage() {
       currentLanguage = currentLanguage === 'en' ? 'ml' : 'en';
       document.documentElement.lang = currentLanguage;
@@ -1232,8 +1234,8 @@
                 <i class="fa-solid ${cat.icon}"></i>
               </div>
               <div>
-                <h2 class="font-serif text-xl sm:text-2xl font-bold text-cafe-accentDark">${cat.title}</h2>
-                <p class="text-xs text-cafe-muted">${cat.subtitle}</p>
+                <h2 class="font-serif text-xl sm:text-2xl font-bold text-cafe-accentDark">${translatedCategoryTitle(cat)}</h2>
+                <p class="text-xs text-cafe-muted">${translatedCategorySubtitle(cat)}</p>
               </div>
             </div>
             <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-white border border-cafe-line text-cafe-muted">
