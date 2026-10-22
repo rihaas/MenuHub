@@ -9,7 +9,7 @@ MenuHub helps customers browse the cafe menu, search items, choose a table numbe
 - Customer menu and ordering experience: in the repository.
 - English/Malayalam toggle: merged into `main`.
 - Data Saver mode: merged into `main`.
-- Firebase admin stock editor: implemented in PR #5 on the `feat/admin-stock-management` branch. PR #5 was merged into its feature-branch base; verify that the admin files are included in the branch you deploy before expecting the feature on your live site.
+- Firebase admin stock editor: `admin.html` and `firestore.rules` are now present in `main`, and the customer page includes the Firebase inventory listener. The deployed website still needs configuration verification and browser testing before the feature is considered live.
 - Firebase project configuration, authentication, and security rules must be verified in the Firebase Console before the admin workflow is considered live.
 - Browser and device testing is still required before production use.
 
@@ -39,8 +39,8 @@ The admin implementation provides:
 | Path | Purpose |
 | --- | --- |
 | `index.html` | Customer-facing menu and ordering experience |
-| `admin.html` | Owner/admin login and menu/stock editor (check that it is present in the deployment branch) |
-| `firestore.rules` | Firestore access policy (check that it is present in the deployment branch) |
+| `admin.html` | Owner/admin login and menu/stock editor |
+| `firestore.rules` | Firestore access policy for menu reads and owner-only writes |
 | `docs/FIREBASE_SETUP.md` | Firebase setup, security, and verification checklist |
 
 ## Quick start
@@ -48,7 +48,7 @@ The admin implementation provides:
 1. Open `index.html` in a browser or deploy it using a static website host.
 2. Check the language toggle and Data Saver option.
 3. Test category browsing, search, cart quantity changes, table-number selection, and WhatsApp order creation.
-4. For Firebase-backed admin features, follow [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md) and confirm the admin implementation is included in the branch you deploy.
+4. For Firebase-backed admin features, follow [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md), deploy the reviewed rules, and complete the acceptance tests.
 
 This is a static HTML project in its current form, so no frontend build step is required. CDN-hosted resources require an internet connection.
 
