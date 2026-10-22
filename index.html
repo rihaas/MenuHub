@@ -305,6 +305,9 @@
         padding-bottom: calc(7rem + env(safe-area-inset-bottom));
       }
     }
+    html.data-saver .menu-photo { display: none; }
+    html.data-saver .animate-pop, html.data-saver .cart-bounce { animation: none !important; }
+    html.data-saver * { scroll-behavior: auto !important; }
     /* Menu photography slots: consistent crop and graceful fallback until photos are added. */
     .menu-photo {
       position: relative;
@@ -1151,6 +1154,9 @@
     let activeCategory = 'all';
     let activeDiet = 'all'; // 'all' | 'veg' | 'nonveg'
     let searchQuery = '';
+    let currentLanguage = 'en';
+    let dataSaverEnabled = false;
+    try { dataSaverEnabled = localStorage.getItem('bb_cafe_data_saver') === 'true' || Boolean(navigator.connection && navigator.connection.saveData); } catch (e) {}
     let orderType = 'Dine-In'; // 'Dine-In' | 'Takeaway' | 'Delivery'
     let ownerPhone = localStorage.getItem('bb_cafe_owner_phone') || '919876543210';
 
@@ -1165,6 +1171,28 @@
     /**************************************************************
      * 3. RENDER MENU & FILTERS
      **************************************************************/
+    const MALAYALAM_NAMES = {
+      'Filter Coffee':'ഫിൽട്ടർ കോഫി','Espresso':'എസ്പ്രസ്സോ','Cappuccino':'കപ്പുച്ചിനോ','Cafe Latte':'കഫേ ലാറ്റെ','Masala Chai':'മസാല ചായ','Green Tea':'ഗ്രീൻ ടീ','Kulukki Sarbath / Lemon Tea':'കുലുക്കി സർബത്ത് / നാരങ്ങ ചായ',
+      'Banana Shake':'ബനാന ഷേക്ക്','Sharjah Shake':'ഷാർജ ഷേക്ക്','Oreo Mud Shake':'ഓറിയോ ഷേക്ക്','Cold Coffee with Ice Cream':'ഐസ്‌ക്രീം ചേർത്ത കോൾഡ് കോഫി','Avocado (Butterfruit) Shake':'അവക്കാഡോ ഷേക്ക്','Fresh Watermelon Juice':'തണ്ണിമത്തൻ ജ്യൂസ്','Fresh Lime Mint Cooler':'നാരങ്ങ പുതിന കൂളർ',
+      'Loaded Chicken Fries':'ചിക്കൻ ഫ്രൈസ്','Peri-Peri French Fries':'പെരി പെരി ഫ്രെഞ്ച് ഫ്രൈസ്','Pazhampori & Beef Roast Combo':'പഴംപൊരി & ബീഫ് റോസ്റ്റ് കോംബോ','Crispy Chicken Momos (6 Pcs)':'ക്രിസ്പി ചിക്കൻ മോമോസ് (6 എണ്ണം)','Veg Cheese Nuggets (8 Pcs)':'വെജ് ചീസ് നഗ്ഗറ്റ്സ് (8 എണ്ണം)','Classic Club Sandwich':'ക്ലാസിക് ക്ലബ് സാൻഡ്‌വിച്ച്',
+      'BackBencher Special Zinger Burger':'ബാക്ക്‌ബെഞ്ചർ സ്പെഷ്യൽ സിംഗർ ബർഗർ','Grill Chicken Tortilla Wrap':'ഗ്രിൽഡ് ചിക്കൻ റാപ്പ്','Creamy Alfredo Penne Pasta':'ക്രീമി ആൽഫ്രെഡോ പെണ്ണെ പാസ്ത','Schezwan Chicken Fried Rice':'ഷെസ്വാൻ ചിക്കൻ ഫ്രൈഡ് റൈസ്','Classic Crispy Veg Burger':'ക്രിസ്പി വെജ് ബർഗർ','Sizzling Brownie with Ice Cream':'ഐസ്‌ക്രീമിനൊപ്പം സിസ്ലിംഗ് ബ്രൗണി','Warm Choco Lava Cake':'ചൂടുള്ള ചോക്കോ ലാവ കേക്ക്','BackBenchers Royal Falooda':'ബാക്ക്‌ബെഞ്ചേഴ്സ് റോയൽ ഫലൂദ','Belgian Dark Chocolate Waffle':'ബെൽജിയൻ ഡാർക്ക് ചോക്ലേറ്റ് വാഫിൾ'
+    };
+    function translatedName(name) { return currentLanguage === 'ml' ? (MALAYALAM_NAMES[name] || name) : name; }
+    function toggleLanguage() {
+      currentLanguage = currentLanguage === 'en' ? 'ml' : 'en';
+      document.documentElement.lang = currentLanguage;
+      document.getElementById('languageToggle').textContent = currentLanguage === 'en' ? 'മലയാളം' : 'English';
+      document.getElementById('searchInput').placeholder = currentLanguage === 'ml' ? 'കോഫി, ഷാർജ ഷേക്ക്, ബർഗർ തുടങ്ങിയവ തിരയുക...' : 'Search Filter Coffee, Sharjah Shake, Zinger Burger, Momos...';
+      const labels = {all:['All Menu','എല്ലാ വിഭവങ്ങളും'],coffee:['Coffee & Tea','കോഫി & ചായ'],shakes:['Shakes & Juices','ഷേക്ക്സ് & ജ്യൂസ്'],snacks:['Snacks & Starters','സ്നാക്സ് & സ്റ്റാർട്ടേഴ്സ്'],mains:['Mains & Burgers','പ്രധാന വിഭവങ്ങൾ'],desserts:['Desserts','മധുരപലഹാരങ്ങൾ']};
+      document.querySelectorAll('.cat-btn').forEach(btn => { const icon = btn.querySelector('i'); const label = labels[btn.dataset.cat] || ['Menu','മെനു']; btn.innerHTML = (icon ? icon.outerHTML + ' ' : '') + label[currentLanguage === 'ml' ? 1 : 0]; });
+      renderMenu();
+    }
+    function toggleDataSaver() {
+      dataSaverEnabled = !dataSaverEnabled; document.documentElement.classList.toggle('data-saver', dataSaverEnabled);
+      try { localStorage.setItem('bb_cafe_data_saver', String(dataSaverEnabled)); } catch (e) {}
+      const btn = document.getElementById('dataSaverToggle'); btn.textContent = currentLanguage === 'ml' ? (dataSaverEnabled ? 'ഡാറ്റ സേവർ: ഓൺ' : 'ഡാറ്റ സേവർ: ഓഫ്') : (dataSaverEnabled ? 'Data Saver: On' : 'Data Saver: Off'); btn.setAttribute('aria-pressed', String(dataSaverEnabled));
+      renderMenu(); showToast(dataSaverEnabled ? 'Data Saver enabled: menu photos are hidden.' : 'Data Saver disabled.');
+    }
     function renderMenu() {
       const container = document.getElementById('menuContainer');
       const emptyState = document.getElementById('emptyState');
@@ -1230,6 +1258,7 @@
 
     function renderMenuItemCard(item) {
       const qty = cart[item.id] || 0;
+      const displayName = translatedName(item.name);
       const dietClass = item.veg ? 'diet-veg' : 'diet-nonveg';
       const dietTitle = item.veg ? '100% Vegetarian' : 'Non-Vegetarian';
 
@@ -1242,7 +1271,7 @@
             onclick="updateItemQty('${item.id}', 1)" 
             class="add-item-btn min-h-[44px] min-w-[76px] px-4 py-2 rounded-xl border border-cafe-accent bg-cafe-accentLight/50 hover:bg-cafe-accent text-cafe-accent hover:text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-2xs active:scale-95" aria-label="Add ${item.name} to order"
           >
-            <span>Add</span>
+            <span>${currentLanguage === 'ml' ? 'ചേർക്കുക' : 'Add'}</span>
             <i class="fa-solid fa-plus text-[11px]"></i>
           </button>`
         : `<div class="quantity-stepper inline-flex items-center bg-cafe-accent text-white rounded-xl p-1 shadow-sm" aria-label="Quantity for ${item.name}">
@@ -1268,7 +1297,7 @@
         : item.category === 'snacks' ? 'fa-bowl-food'
         : item.category === 'mains' ? 'fa-burger'
         : 'fa-ice-cream';
-      const photoHtml = item.image
+      const photoHtml = !dataSaverEnabled && item.image
         ? `<div class="menu-photo"><img src="${item.image}" alt="${item.name}" loading="lazy" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><div class="menu-photo-placeholder" hidden><i class="fa-solid ${photoIcon}"></i><span>Photo coming soon</span></div></div>`
         : `<div class="menu-photo" role="img" aria-label="Photo placeholder for ${item.name}"><div class="menu-photo-placeholder"><i class="fa-solid ${photoIcon}"></i><span>Photo coming soon</span></div></div>`;
 
@@ -1283,7 +1312,7 @@
               </div>
               <span class="text-base sm:text-lg font-extrabold text-cafe-accent">₹${item.price}</span>
             </div>
-            <h3 class="font-bold text-base text-cafe-text leading-snug mb-1">${item.name}</h3>
+            <h3 class="font-bold text-base text-cafe-text leading-snug mb-1">${displayName}</h3>
             <p class="text-xs text-cafe-muted leading-relaxed">${item.desc}</p>
           </div>
 
@@ -1795,6 +1824,9 @@
 
       // Initialize UI
       updateOwnerPhoneDisplays();
+      document.documentElement.classList.toggle('data-saver', dataSaverEnabled);
+      document.getElementById('dataSaverToggle').textContent = dataSaverEnabled ? 'Data Saver: On' : 'Data Saver: Off';
+      document.getElementById('dataSaverToggle').setAttribute('aria-pressed', String(dataSaverEnabled));
       setOrderType(orderType);
       renderMenu();
       updateCartUI();
