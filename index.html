@@ -386,10 +386,14 @@
         <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
         <span class="announcement-copy">Accepting Instant WhatsApp Orders • Dine-In, Takeaway & Local Delivery</span>
       </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <button id="languageToggle" type="button" onclick="toggleLanguage()" class="rounded-lg border border-white/15 px-3 py-2 text-xs font-bold text-white min-h-[40px]">മലയാളം</button>
+        <button id="dataSaverToggle" type="button" onclick="toggleDataSaver()" aria-pressed="false" class="rounded-lg border border-white/15 px-3 py-2 text-xs font-bold text-white min-h-[40px]">Data Saver: Off</button>
       <button onclick="openOwnerConfigModal()" class="owner-config-trigger text-cafe-gold hover:underline flex items-center gap-1.5 font-medium transition">
         <i class="fa-solid fa-gear text-[11px]"></i>
         <span>Owner WhatsApp: <strong id="topOwnerPhoneDisplay">+91 98765 43210</strong></span>
       </button>
+      </div>
     </div>
   </div>
 
