@@ -1362,9 +1362,7 @@
       saveCart();
       renderMenu();
       updateCartUI();
-
-      const item = MENU_ITEMS.find(i => i.id === itemId);
-      if (delta > 0 && current === 0 && item) {
+            if (delta > 0 && current === 0 && item) {
         showToast(`Added "${item.name}" to your order tray`);
       }
     }
